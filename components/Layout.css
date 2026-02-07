@@ -1,0 +1,284 @@
+.layout-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  display: flex;
+  transition: background-color 0.2s;
+}
+
+.dark .layout-container {
+  background-color: #111827;
+}
+
+.layout-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+
+.layout-sidebar {
+  position: fixed;
+  inset-y: 0;
+  left: 0;
+  z-index: 30;
+  width: 16rem;
+  background-color: white;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  border-right: 1px solid #e5e7eb;
+}
+
+.dark .layout-sidebar {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.layout-sidebar.open {
+  transform: translateX(0);
+}
+
+@media (min-width: 1024px) {
+  .layout-sidebar {
+    position: static;
+    transform: translateX(0);
+    box-shadow: none;
+  }
+  .layout-overlay {
+    display: none;
+  }
+}
+
+.sidebar-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dark .sidebar-header {
+  border-color: #374151;
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #4f46e5, #9333ea);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.dark .brand-subtitle {
+  color: #9ca3af;
+}
+
+.user-profile {
+  padding: 1.5rem;
+  background-color: #eef2ff;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dark .user-profile {
+  background-color: rgba(49, 46, 129, 0.2);
+}
+
+.user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: #e0e7ff;
+  color: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.dark .user-avatar {
+  background-color: #3730a3;
+  color: #a5b4fc;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.dark .user-name {
+  color: white;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: #4f46e5;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.dark .user-role {
+  color: #818cf8;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dark .sidebar-footer {
+  border-color: #374151;
+}
+
+.footer-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dark .footer-btn {
+  color: #d1d5db;
+}
+
+.footer-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.dark .footer-btn:hover {
+  background-color: #374151;
+}
+
+.footer-btn.logout {
+  color: #dc2626;
+}
+
+.footer-btn.logout:hover {
+  background-color: #fef2f2;
+}
+
+.dark .footer-btn.logout:hover {
+  background-color: rgba(127, 29, 29, 0.2);
+}
+
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.main-header {
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dark .main-header {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+}
+
+@media (min-width: 1024px) {
+  .header-content {
+    padding: 0.75rem 2rem;
+  }
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.menu-btn {
+  padding: 0.5rem;
+  color: #4b5563;
+  border-radius: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dark .menu-btn {
+  color: #d1d5db;
+}
+
+.menu-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.dark .menu-btn:hover {
+  background-color: #374151;
+}
+
+@media (min-width: 1024px) {
+  .menu-btn {
+    display: none;
+  }
+}
+
+.page-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.dark .page-title {
+  color: white;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding: 2rem;
+  }
+}
+
+.content-container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
