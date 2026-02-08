@@ -101,13 +101,22 @@ const AdminClassroomManager = ({ user }) => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [message, setMessage] = useState('');
   const bottomRef = useRef(null);
+  const prevMessageCountRef = useRef(0);
 
   useEffect(() => {
     fetchGroups();
   }, []);
 
+  // Only scroll when new messages are added, not on every refresh
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!selectedGroup) return;
+    const msgCount = selectedGroup.messages?.length || 0;
+    if (msgCount !== prevMessageCountRef.current) {
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
+      prevMessageCountRef.current = msgCount;
+    }
   }, [selectedGroup?.messages]);
 
   const fetchGroups = async () => {
@@ -830,8 +839,15 @@ const ChatMonitor = ({ teachers, adminUser }) => {
     }
   }, [selectedGroup]);
 
+  // Only scroll when new messages are added, not on every refresh
+  const prevChatCountRef = useRef(0);
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chats.length !== prevChatCountRef.current) {
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
+      prevChatCountRef.current = chats.length;
+    }
   }, [chats]);
 
   const deleteMessage = async (id) => {
@@ -870,17 +886,17 @@ const ChatMonitor = ({ teachers, adminUser }) => {
 
       <Card title="3. Chat History" className="h-full flex flex-col">
         {selectedGroup ? (
-          <div className="flex-1 overflow-y-auto space-y-4 p-2 bg-gray-50 rounded-lg">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-4 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
              {chats.length > 0 ? chats.map(c => (
-               <div key={c.id} className={`p-3 rounded-lg max-w-[80%] group relative ${c.senderId === selectedTeacher ? 'bg-indigo-100 ml-auto' : 'bg-white mr-auto'}`}>
+               <div key={c.id} className={`p-3 rounded-lg max-w-[80%] group relative ${c.senderId === selectedTeacher ? 'bg-indigo-100 dark:bg-indigo-900 text-gray-900 dark:text-gray-100 ml-auto' : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 mr-auto'}`}>
                   <div className="flex justify-between items-center gap-2">
-                    <div className="text-xs font-bold text-gray-600 mb-1">{c.senderName}</div>
+                    <div className="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1">{c.senderName}</div>
                     <button onClick={() => deleteMessage(c.id)} className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Trash2 size={12} />
                     </button>
                   </div>
-                  <div className="text-sm">{c.message}</div>
-                  <div className="text-[10px] text-gray-400 text-right mt-1">{new Date(c.timestamp).toLocaleString()}</div>
+                  <div className="text-sm text-gray-900 dark:text-gray-100">{c.message}</div>
+                  <div className="text-[10px] text-gray-400 dark:text-gray-500 text-right mt-1">{new Date(c.timestamp).toLocaleString()}</div>
                </div>
              )) : <div className="text-center text-gray-400 mt-10">No messages yet.</div>}
              <div ref={bottomRef} />

@@ -97,6 +97,7 @@ const ProjectTab = ({ user }) => {
   const [isMarksSubmitted, setIsMarksSubmitted] = useState(false);
   const [daysLeft, setDaysLeft] = useState(null);
   const bottomRef = useRef(null);
+  const prevChatCountRef = useRef(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,8 +142,14 @@ const ProjectTab = ({ user }) => {
     return () => clearInterval(interval);
   }, [myAssignment]);
 
+  // Only scroll when new messages are added, not on every refresh
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chats.length !== prevChatCountRef.current) {
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
+      prevChatCountRef.current = chats.length;
+    }
   }, [chats]);
 
   const updateProgress = async () => {
@@ -273,12 +280,12 @@ const ProjectTab = ({ user }) => {
         </Card>
       </div>
 
-      <Card title="Guide Chat" className="h-[500px] flex flex-col">
-        <div className="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-4 space-y-3 mb-4">
+      <Card title="Guide Chat" className="h-[500px] flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3 mb-4">
            {chats.map(c => (
-             <div key={c.id} className={`max-w-[80%] p-3 rounded-lg shadow-sm group relative ${c.senderId === user.id ? 'ml-auto bg-indigo-100' : 'mr-auto bg-white'}`}>
+             <div key={c.id} className={`max-w-[80%] p-3 rounded-lg shadow-sm group relative ${c.senderId === user.id ? 'ml-auto bg-indigo-100 dark:bg-indigo-900 text-gray-900 dark:text-gray-100' : 'mr-auto bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'}`}>
                <div className="flex justify-between items-start gap-2">
-                 <div className="text-xs font-bold text-gray-600 mb-1">{c.senderName}</div>
+                 <div className="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1">{c.senderName}</div>
                  {c.senderId === user.id && (
                     <button onClick={() => deleteMessage(c.id)} className="text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Trash2 size={12} />
@@ -286,7 +293,7 @@ const ProjectTab = ({ user }) => {
                  )}
                </div>
                <div>{c.message}</div>
-               <div className="text-[10px] text-gray-400 text-right">{new Date(c.timestamp).toLocaleTimeString()}</div>
+               <div className="text-[10px] text-gray-400 dark:text-gray-500 text-right">{new Date(c.timestamp).toLocaleTimeString()}</div>
              </div>
            ))}
            <div ref={bottomRef} />
@@ -305,13 +312,22 @@ const GroupsTab = ({ user }) => {
   const [joinKey, setJoinKey] = useState('');
   const [activeGroup, setActiveGroup] = useState(null);
   const bottomRef = useRef(null);
+  const prevMessageCountRef = useRef(0);
 
   useEffect(() => {
     fetchMyGroups();
   }, []);
 
+  // Only scroll when new messages are added, not on every refresh
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!activeGroup) return;
+    const msgCount = activeGroup.messages?.length || 0;
+    if (msgCount !== prevMessageCountRef.current) {
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
+      prevMessageCountRef.current = msgCount;
+    }
   }, [activeGroup?.messages]);
 
   const fetchMyGroups = async () => {
