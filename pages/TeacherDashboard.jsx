@@ -726,11 +726,9 @@ const GroupWorkspace = ({ groupId, user, projectData }) => {
   // Sync with student updates (assignment progress)
   const [studentProgress, setStudentProgress] = useState(0);
 
+  // Load initial data and saved marks on group selection
   useEffect(() => {
-    const refresh = async () => {
-      const allChats = await ApiService.getChats();
-      setChats(allChats.filter(c => c.targetType === 'GROUP' && c.targetId === groupId));
-      
+    const loadInitialData = async () => {
       const allMarks = await ApiService.getMarks();
       const existingMark = allMarks.find(m => m.groupId === groupId && m.projectId === projectData.projectId);
 
@@ -757,13 +755,35 @@ const GroupWorkspace = ({ groupId, user, projectData }) => {
         setIsSubmitted(false);
       }
     };
-    refresh();
-    const interval = setInterval(refresh, 5000);
+    loadInitialData();
+  }, [groupId, projectData]);
+
+  // Auto-refresh only chats and submission status, NOT form inputs
+  useEffect(() => {
+    const refreshChatsAndStatus = async () => {
+      const allChats = await ApiService.getChats();
+      setChats(allChats.filter(c => c.targetType === 'GROUP' && c.targetId === groupId));
+      
+      const allSubs = await ApiService.getSubmissions();
+      const sub = allSubs.find(s => s.assignmentId === projectData.id);
+      setSubmission(sub || null);
+    };
+    const interval = setInterval(refreshChatsAndStatus, 5000);
     return () => clearInterval(interval);
   }, [groupId, projectData]);
 
+  // Scroll to bottom when new messages arrive or group changes, but not on every refresh
+  const prevChatCountRef = useRef(0);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Scroll when new messages are added or group first loads
+    if (chats.length !== prevChatCountRef.current) {
+      // Use setTimeout to ensure DOM is updated before scrolling
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
+      prevChatCountRef.current = chats.length;
+    }
   }, [chats]);
 
   const sendChat = async () => {
@@ -872,12 +892,12 @@ const GroupWorkspace = ({ groupId, user, projectData }) => {
       <Card title={`Chat with ${projectData.leader}'s Group`} className="chat-box">
         <div className="chat-messages">
            {chats.map(c => (
-             <div key={c.id} className={`chat-msg ${c.senderId === user.id ? 'ml-auto bg-indigo-50 border-indigo-100 max-w-[80%]' : 'mr-auto max-w-[80%]'}`}>
+             <div key={c.id} className={`chat-msg ${c.senderId === user.id ? 'ml-auto bg-indigo-50 dark:bg-indigo-900 border-indigo-100 dark:border-indigo-700 max-w-[80%]' : 'mr-auto max-w-[80%]'}`}>
                <div className="flex justify-between items-baseline gap-2">
                   <div className="chat-sender">{c.senderName}</div>
-                  <div className="text-[10px] text-gray-400">{new Date(c.timestamp).toLocaleTimeString()}</div>
+                  <div className="text-[10px] text-gray-400 dark:text-gray-500">{new Date(c.timestamp).toLocaleTimeString()}</div>
                </div>
-               <div className="text-sm">{c.message}</div>
+               <div className="text-sm text-gray-900 dark:text-gray-100">{c.message}</div>
              </div>
            ))}
            <div ref={bottomRef} />
