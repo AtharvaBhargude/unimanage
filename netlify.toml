@@ -2,5 +2,5 @@
   command = "npm run build"
   publish = "dist"
 
-[env]
+[build.environment]
   SECRETS_SCAN_OMIT_KEYS = "VITE_API_URL"
