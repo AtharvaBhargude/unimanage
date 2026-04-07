@@ -21,7 +21,7 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 // CORS configuration with explicit origin handling
 const allowedOrigins = process.env.CORS_ORIGIN 
   ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()) 
-  : ['http://localhost:3000', 'http://localhost:5173', 'https://unimanage-five.vercel.app'];
+  : ['http://localhost:3000', 'http://localhost:5173', 'https://unimanage-five.vercel.app', 'https://unimanage-ja98xlqdo-atharvabhargudes-projects.vercel.app'];
 
 app.use(cors({
   origin: function(origin, callback) {
@@ -40,8 +40,6 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-// Preflight request handler
-app.options('*', cors());
 app.use(bodyParser.json());
 
 const apiLimiter = rateLimit({
